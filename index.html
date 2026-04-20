@@ -3,45 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gavoille Opticiens - Expérience Miroir</title>
+    <title>Gavoille Opticiens - Expérience Premium</title>
     <style>
-        :root { --red: #e60000; --black: #111; --white: #ffffff; }
-        body { margin: 0; background: var(--black); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: var(--white); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        :root { --red: #e60000; --black: #000; --gold: #d4af37; }
+        body { margin: 0; background: var(--black); font-family: 'Helvetica Neue', Arial; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { padding: 15px; text-align: center; border-bottom: 1px solid #333; background: #000; }
-        .logo { font-weight: 900; letter-spacing: 4px; font-size: 1.6rem; }
-        .tagline { color: var(--red); font-size: 0.8rem; font-weight: bold; margin-top: 4px; letter-spacing: 1px; }
+        header { padding: 15px; text-align: center; border-bottom: 1px solid #222; }
+        .logo { font-weight: 900; letter-spacing: 5px; font-size: 1.8rem; }
+        .tagline { color: var(--red); font-size: 0.8rem; letter-spacing: 2px; margin-top: 5px; }
 
-        .main-container { display: flex; flex: 1; padding: 15px; gap: 15px; overflow: hidden; }
+        .main-container { display: flex; flex: 1; padding: 20px; gap: 20px; }
 
-        /* Section Miroir */
-        .mirror-section { flex: 1.4; position: relative; border-radius: 25px; overflow: hidden; border: 2px solid #444; box-shadow: 0 0 30px rgba(230,0,0,0.2); }
+        /* Miroir avec décompte */
+        .mirror-section { flex: 1.5; position: relative; border-radius: 30px; overflow: hidden; border: 2px solid #333; background: #111; }
         #video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        #countdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 150px; font-weight: 900; color: var(--red); display: none; text-shadow: 0 0 20px black; }
 
-        /* Galerie de droite */
-        .gallery-section { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; }
-        .photo-slot { background: #222; border-radius: 15px; overflow: hidden; position: relative; border: 2px solid #333; }
+        /* Galerie */
+        .gallery-section { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15px; }
+        .photo-slot { background: #1a1a1a; border-radius: 15px; overflow: hidden; position: relative; border: 2px solid #333; }
         .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
-        .slot-num { position: absolute; top: 8px; left: 8px; background: var(--red); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        .slot-tag { position: absolute; top: 10px; left: 10px; background: var(--red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        /* Zone de commande basse */
-        .controls { padding: 20px; display: flex; justify-content: space-around; align-items: center; background: #000; border-top: 1px solid #333; }
-        
-        .btn-capture { width: 70px; height: 70px; background: var(--white); border: 6px solid var(--red); border-radius: 50%; cursor: pointer; transition: 0.2s; }
-        .btn-capture:active { transform: scale(0.9); }
+        /* Boutons */
+        .controls { padding: 30px; display: flex; justify-content: center; align-items: center; gap: 50px; border-top: 1px solid #222; }
+        .capture-group { text-align: center; cursor: pointer; }
+        .btn-shot { width: 80px; height: 80px; background: white; border: 6px solid var(--red); border-radius: 50%; margin-bottom: 10px; }
+        .btn-finish { background: var(--red); color: white; border: none; padding: 18px 40px; border-radius: 50px; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: 0 0 20px rgba(230,0,0,0.4); }
 
-        .btn-action { background: var(--red); color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; }
-
-        /* Écran Social (Modal) */
-        #social-modal { display: none; position: fixed; inset: 0; background: var(--black); z-index: 1000; flex-direction: column; align-items: center; padding: 20px; text-align: center; overflow-y: auto; }
-        #collage-result { width: 100%; max-width: 500px; border-radius: 15px; margin: 15px 0; border: 4px solid #333; }
-        
-        .social-buttons { display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%; max-width: 400px; }
-        .btn-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; padding: 15px; border-radius: 12px; font-weight: bold; border: none; font-size: 1rem; cursor: pointer; }
-        .btn-follow { background: #333; color: white; padding: 12px; border-radius: 12px; border: 1px solid #555; cursor: pointer; }
-        .btn-reset { background: transparent; color: #888; border: none; margin-top: 20px; text-decoration: underline; cursor: pointer; }
-
-        .social-instruction { margin: 10px 0; font-size: 1.1rem; color: #ccc; }
+        /* Modal Social */
+        #social-modal { display: none; position: fixed; inset: 0; background: var(--black); z-index: 2000; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto; }
+        #final-collage { width: 100%; max-width: 450px; border-radius: 20px; margin: 20px 0; box-shadow: 0 0 40px rgba(255,255,255,0.1); }
+        .social-grid { display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%; max-width: 450px; }
+        .btn-insta { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); color: white; padding: 18px; border-radius: 15px; border: none; font-weight: bold; font-size: 1.1rem; }
+        .btn-back { background: transparent; color: #555; border: none; margin-top: 20px; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -54,42 +49,35 @@
 <div class="main-container">
     <div class="mirror-section">
         <video id="video" autoplay playsinline></video>
+        <div id="countdown">3</div>
     </div>
 
     <div class="gallery-section">
-        <div class="photo-slot" id="slot-1"><div class="slot-num">1</div></div>
-        <div class="photo-slot" id="slot-2"><div class="slot-num">2</div></div>
-        <div class="photo-slot" id="slot-3"><div class="slot-num">3</div></div>
-        <div class="photo-slot" id="slot-4"><div class="slot-num">4</div></div>
+        <div class="photo-slot" id="slot-1"><div class="slot-tag">A</div></div>
+        <div class="photo-slot" id="slot-2"><div class="slot-tag">B</div></div>
+        <div class="photo-slot" id="slot-3"><div class="slot-tag">C</div></div>
+        <div class="photo-slot" id="slot-4"><div class="slot-tag">D</div></div>
     </div>
 </div>
 
 <div class="controls">
-    <div style="text-align:center;">
-        <button class="btn-capture" onclick="takeSnapshot()"></button>
-        <div style="margin-top:5px; font-size: 10px;">CAPTURE</div>
+    <div class="capture-group" onclick="startCountdown()">
+        <div class="btn-shot"></div>
+        <span style="font-weight: bold; font-size: 0.8rem;">Sourire !</span>
     </div>
     
-    <button id="btn-finish" class="btn-action" style="display:none;" onclick="finishExperience()">
-        Aidez-moi à choisir ! ➔
-    </button>
+    <button id="btn-compare" class="btn-finish" style="display:none;" onclick="buildFinal()">PARTAGER MON STYLE ➔</button>
 </div>
 
 <div id="social-modal">
-    <h2 style="margin: 0;">C'est SUBLIME !</h2>
-    <p class="social-instruction">Scannez ou maintenez l'image pour la partager et demander l'avis de vos proches.</p>
-    
-    <img id="collage-result" src="">
-
-    <div class="social-buttons">
-        <button class="btn-insta" onclick="window.location.href='https://www.instagram.com/gavoilleopticiens/'">
-            POSTER EN STORY 📸
-        </button>
-        <button class="btn-follow" onclick="window.location.href='https://www.instagram.com/gavoilleopticiens/'">
-            S'ABONNER À GAVOILLE
-        </button>
-        <button class="btn-reset" onclick="location.reload()">Recommencer une séance</button>
+    <h2 style="margin:0">Étape finale</h2>
+    <p style="color: #888;">Prenez une capture d'écran ou enregistrez l'image</p>
+    <img id="final-collage" src="">
+    <div class="social-grid">
+        <button class="btn-insta" onclick="window.location.href='https://www.instagram.com/gavoilleopticiens/'">PUBLIER SUR INSTAGRAM</button>
+        <button onclick="location.reload()" style="background:#222; color:white; border:none; padding:15px; border-radius:15px;">NOUVEL ESSAYAGE</button>
     </div>
+    <button class="btn-back" onclick="document.getElementById('social-modal').style.display='none'">Retour aux photos</button>
 </div>
 
 <canvas id="canvas" style="display:none;"></canvas>
@@ -97,62 +85,78 @@
 <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
+    const countDiv = document.getElementById('countdown');
     let photos = [null, null, null, null];
-    let count = 0;
+    let current = 0;
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-        .then(stream => { video.srcObject = stream; })
-        .catch(err => console.log(err));
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }).then(s => video.srcObject = s);
 
-    function takeSnapshot() {
-        if(count >= 4) count = 0; // On boucle sur les 4 slots
+    function startCountdown() {
+        let timer = 3;
+        countDiv.innerText = timer;
+        countDiv.style.display = "block";
         
+        const interval = setInterval(() => {
+            timer--;
+            countDiv.innerText = timer;
+            if(timer === 0) {
+                clearInterval(interval);
+                countDiv.style.display = "none";
+                doCapture();
+            }
+        }, 800);
+    }
+
+    function doCapture() {
         const ctx = canvas.getContext('2d');
         canvas.width = 1000; canvas.height = 1000;
         ctx.translate(1000, 0); ctx.scale(-1, 1);
         ctx.drawImage(video, 0, 0, 1000, 1000);
         
         const data = canvas.toDataURL('image/jpeg', 0.8);
-        photos[count] = data;
+        photos[current % 4] = data;
         
-        document.getElementById(`slot-${count + 1}`).innerHTML = `<img src="${data}"><div class="slot-num">${count+1}</div>`;
-        count++;
-
-        if(count >= 2) document.getElementById('btn-finish').style.display = "block";
+        const labels = ['A', 'B', 'C', 'D'];
+        document.getElementById(`slot-${(current % 4) + 1}`).innerHTML = `<img src="${data}"><div class="slot-tag">${labels[current % 4]}</div>`;
+        
+        current++;
+        if(current >= 2) document.getElementById('btn-compare').style.display = "block";
     }
 
-    function finishExperience() {
+    function buildFinal() {
         const collage = document.createElement('canvas');
-        collage.width = 1200; collage.height = 1350; // Un peu plus haut pour le logo en bas
+        collage.width = 1200; collage.height = 1450;
         const ctx = collage.getContext('2d');
 
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, 1200, 1350);
+        ctx.fillStyle = "white"; ctx.fillRect(0,0,1200,1450);
 
+        const pos = [[0,0], [600,0], [0,600], [600,600]];
+        const labels = ['A', 'B', 'C', 'D'];
         let loaded = 0;
-        const validPhotos = photos.filter(p => p !== null);
-        
-        const positions = [[0,0], [600,0], [0,600], [600,600]];
 
         photos.forEach((p, i) => {
             if(!p) return;
             const img = new Image();
             img.onload = () => {
-                ctx.drawImage(img, positions[i][0], positions[i][1], 598, 598);
-                loaded++;
-                if(loaded === validPhotos.length) {
-                    // Bandeau Signature Gavoille
-                    ctx.fillStyle = "#111";
-                    ctx.fillRect(0, 1200, 1200, 150);
-                    ctx.fillStyle = "white";
-                    ctx.font = "bold 50px Helvetica";
-                    ctx.textAlign = "center";
-                    ctx.fillText("GAVOILLE OPTICIENS", 600, 1270);
-                    ctx.font = "25px Helvetica";
-                    ctx.fillStyle = "#e60000";
-                    ctx.fillText("Quel est votre choix préféré ? #GavoilleOpticiens", 600, 1310);
+                ctx.drawImage(img, pos[i][0], pos[i][1], 598, 598);
+                // Badge lettre
+                ctx.fillStyle = "#e60000";
+                ctx.beginPath(); ctx.arc(pos[i][0]+50, pos[i][1]+50, 35, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "white"; ctx.font = "bold 40px Arial"; ctx.textAlign="center";
+                ctx.fillText(labels[i], pos[i][0]+50, pos[i][1]+65);
 
-                    document.getElementById('collage-result').src = collage.toDataURL('image/jpeg');
+                loaded++;
+                if(loaded === photos.filter(x => x).length) {
+                    // Footer
+                    ctx.fillStyle = "#000"; ctx.fillRect(0, 1200, 1200, 250);
+                    ctx.fillStyle = "white"; ctx.font = "bold 60px Helvetica"; ctx.textAlign="center";
+                    ctx.fillText("GAVOILLE OPTICIENS", 600, 1290);
+                    ctx.fillStyle = "#e60000"; ctx.font = "bold 35px Helvetica";
+                    ctx.fillText("QUEL EST VOTRE CHOIX ? (A, B, C ou D)", 600, 1350);
+                    ctx.fillStyle = "#888"; ctx.font = "25px Helvetica";
+                    ctx.fillText("Partagez votre style sur Instagram @gavoilleopticiens", 600, 1400);
+
+                    document.getElementById('final-collage').src = collage.toDataURL('image/jpeg');
                     document.getElementById('social-modal').style.display = "flex";
                 }
             };
