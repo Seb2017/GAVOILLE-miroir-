@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gavoille Opticiens - Expérience Premium</title>
+    <title>Gavoille Opticiens - Expérience Miroir Pro</title>
     <style>
         :root { --red: #e60000; --black: #000; --white: #ffffff; }
         body { margin: 0; background: var(--black); font-family: 'Helvetica Neue', Arial; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { padding: 15px; text-align: center; border-bottom: 1px solid #222; z-index: 10; background: #000; }
+        header { padding: 15px; text-align: center; border-bottom: 1px solid #222; background: #000; z-index: 10; }
         .logo { font-weight: 900; letter-spacing: 5px; font-size: 1.8rem; }
         .tagline { color: var(--red); font-size: 0.8rem; letter-spacing: 2px; margin-top: 5px; }
 
@@ -22,14 +22,13 @@
         /* Galerie */
         .gallery-section { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15px; }
         .photo-slot { background: #1a1a1a; border-radius: 15px; overflow: hidden; position: relative; border: 2px solid #333; }
-        .photo-slot img { width: 100%; height: 100%; object-fit: cover; } /* CORRECTION VIGNETTE */
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
         .slot-tag { position: absolute; top: 10px; left: 10px; background: var(--red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        /* Boutons Zone */
+        /* Boutons */
         .controls { padding: 30px; display: flex; justify-content: center; align-items: center; gap: 50px; border-top: 1px solid #222; background: #000; z-index: 10; }
         .capture-group { text-align: center; cursor: pointer; }
         .btn-shot { width: 80px; height: 80px; background: white; border: 6px solid var(--red); border-radius: 50%; margin-bottom: 10px; transition: 0.2s; }
-        .btn-shot:active { transform: scale(0.9); }
         .btn-finish { background: var(--red); color: white; border: none; padding: 18px 40px; border-radius: 50px; font-weight: 900; font-size: 1.1rem; cursor: pointer; display: none; box-shadow: 0 0 20px rgba(230,0,0,0.4); }
 
         /* Modal Social */
@@ -72,7 +71,7 @@
 
 <div id="social-modal">
     <h2 style="margin:0; color:var(--red);">C'EST SUBLIME !</h2>
-    <p style="color: #aaa; margin-top: 5px;">Cliquez sur le bouton pour partager et demander l'avis de vos proches</p>
+    <p style="color: #aaa; margin-top: 5px;">Cliquez sur le bouton pour partager</p>
     
     <img id="final-collage" src="">
 
@@ -92,63 +91,40 @@
     let current = 0;
     window.sharedFile = null;
 
-    // Lancement caméra
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-        .then(s => video.srcObject = s)
-        .catch(err => alert("Veuillez autoriser la caméra sur votre iPad."));
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } }).then(s => video.srcObject = s);
 
     function startCountdown() {
-        let timer = 3;
-        countDiv.innerText = timer;
-        countDiv.style.display = "block";
-        
+        let timer = 3; countDiv.innerText = timer; countDiv.style.display = "block";
         const interval = setInterval(() => {
             timer--;
-            if(timer > 0) {
-                countDiv.innerText = timer;
-            } else {
-                clearInterval(interval);
-                countDiv.style.display = "none";
-                takePhoto();
-            }
+            if(timer > 0) countDiv.innerText = timer;
+            else { clearInterval(interval); countDiv.style.display = "none"; takePhoto(); }
         }, 800);
     }
 
     function takePhoto() {
         const ctx = canvas.getContext('2d');
-        // CORRECTION DEFORMATION : On respecte le ratio de la vidéo d'origine
-        const vW = video.videoWidth;
-        const vH = video.videoHeight;
-        canvas.width = vW;
-        canvas.height = vH;
-        
+        const vW = video.videoWidth; const vH = video.videoHeight;
+        canvas.width = vW; canvas.height = vH;
         ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
         const data = canvas.toDataURL('image/jpeg', 0.9);
         photos[current % 4] = data;
-        
         const labels = ['A', 'B', 'C', 'D'];
-        // CORRECTION CSS Vignette : object-fit:cover est déjà dans le CSS principal
         document.getElementById(`slot-${(current % 4) + 1}`).innerHTML = `<img src="${data}"><div class="slot-tag">${labels[current % 4]}</div>`;
-        
-        current++;
-        if(current >= 2) document.getElementById('btn-compare').style.display = "block";
+        current++; if(current >= 2) document.getElementById('btn-compare').style.display = "block";
     }
 
     function buildFinal() {
         const collage = document.createElement('canvas');
-        
-        // CORRECTION DEFORMATION : Le montage entier s'adapte aux proportions de la vidéo d'origine
         const img = new Image();
         img.src = photos[0];
         img.onload = () => {
             const pW = img.width;
             const pH = img.height;
-            
-            // Le montage est un grand portrait contenant 4 photos et le footer
-            collage.width = pW * 2 + 30; // 2 cols + marges
-            collage.height = pH * 2 + 330; // 2 rows + marges + footer
+            collage.width = pW * 2 + 30;
+            // CORRECTION CALCULE HAUTEUR : On ajoute la hauteur du footer
+            collage.height = pH * 2 + 380; // 2 rows + marges + footer plus grand pour les tags
             
             const ctx = collage.getContext('2d');
             ctx.fillStyle = "white"; ctx.fillRect(0,0,collage.width, collage.height);
@@ -163,32 +139,31 @@
                 const pImg = new Image();
                 pImg.onload = () => {
                     ctx.drawImage(pImg, pos[i][0], pos[i][1], pW, pH);
-                    
-                    // Badge lettre proportionnel
                     const badgeSize = (collage.width / 20);
                     ctx.fillStyle = "#e60000";
                     ctx.beginPath(); ctx.arc(pos[i][0]+badgeSize+10, pos[i][1]+badgeSize+10, badgeSize, 0, Math.PI*2); ctx.fill();
                     ctx.fillStyle = "white"; ctx.font = `bold ${badgeSize+10}px Arial`; ctx.textAlign="center";
                     ctx.fillText(labels[i], pos[i][0]+badgeSize+10, pos[i][1]+badgeSize+badgeSize/3+10);
-
                     loaded++;
                     if(loaded === activePhotos.length) {
-                        // Signature Gavoille adaptée
-                        const footTop = collage.height - 300;
-                        ctx.fillStyle = "#000"; ctx.fillRect(0, footTop, collage.width, 300);
+                        const footTop = pH * 2 + 30; // CORRECTION PLACEMENT FOOTER
+                        ctx.fillStyle = "#000"; ctx.fillRect(0, footTop, collage.width, collage.height - footTop);
                         
                         ctx.fillStyle = "white"; ctx.font = `bold ${collage.width / 15}px Helvetica`; ctx.textAlign="center";
                         ctx.fillText("GAVOILLE OPTICIENS", collage.width/2, footTop + 120);
                         
                         ctx.fillStyle = "#e60000"; ctx.font = `bold ${collage.width / 25}px Helvetica`;
-                        ctx.fillText("QUEL EST VOTRE CHOIX PRÉFÉRÉ ?", collage.width/2, footTop + 210);
+                        ctx.fillText("QUEL EST VOTRE CHOIX PRÉFÉRÉ ?", collage.width/2, footTop + 200);
                         
-                        // Résultat final
-                        const finalDataUrl = collage.toDataURL('image/jpeg', 0.95); // Qualité max
+                        // CORRECTION AJOUT BANDEAU HASHTAGS (INSPIRÉ DE CLAUDE)
+                        const tagFootTop = footTop + 280;
+                        ctx.fillStyle = "#1a1a1a"; ctx.fillRect(0, tagFootTop, collage.width, collage.height - tagFootTop);
+                        ctx.fillStyle = "#aaa"; ctx.font = `normal ${collage.width / 45}px Helvetica`; ctx.textAlign="left";
+                        ctx.fillText("#GavoilleOpticiens #HésitationLunettes #Optician #JassansRiottier #0437554043", 50, tagFootTop + 60);
+
+                        const finalDataUrl = collage.toDataURL('image/jpeg', 0.95);
                         document.getElementById('final-collage').src = finalDataUrl;
                         document.getElementById('social-modal').style.display = "flex";
-
-                        // Fichier pour le partage iPad
                         collage.toBlob(blob => {
                             window.sharedFile = new File([blob], "choix-style-gavoille.jpg", { type: "image/jpeg" });
                         }, 'image/jpeg');
@@ -201,14 +176,9 @@
 
     async function shareToInsta() {
         if (navigator.share && window.sharedFile) {
-            try {
-                await navigator.share({
-                    files: [window.sharedFile],
-                    title: 'Mon style chez Gavoille Opticiens',
-                    text: 'Aidez-moi à choisir ma nouvelle monture !'
-                });
-            } catch (err) { console.log("Partage annulé"); }
-        } else { alert("Veuillez patienter ou utiliser le bouton Enregistrer."); }
+            try { await navigator.share({ files: [window.sharedFile], title: 'Gavoille Opticiens', text: 'Aidez-moi à choisir !' });
+            } catch (err) { }
+        } else { alert("Partage non supporté."); }
     }
 </script>
 </body>
