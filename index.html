@@ -3,121 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Miroir GAVOILLE</title>
+    <title>Miroir Gavoille Opticiens</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root {
-            --gavoille-red: #ff0000; /* Le rouge vif demandé */
-            --gavoille-black: #000000;
-        }
+        :root { --gavoille-red: #e60000; --gavoille-black: #1a1a1a; }
+        body { margin: 0; background: var(--gavoille-black); font-family: 'Helvetica Neue', Arial, sans-serif; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        header { padding: 15px; text-align: center; border-bottom: 1px solid #333; }
+        .logo { font-weight: bold; letter-spacing: 2px; font-size: 1.5rem; text-transform: uppercase; }
 
-        body {
-            margin: 0; padding: 0;
-            background: var(--gavoille-black);
-            font-family: 'Arial', sans-serif;
-            color: white; height: 100vh; display: flex; flex-direction: column;
-        }
-
-        header { 
-            padding: 20px; 
-            text-align: center; 
-            background: #111;
-            border-bottom: 2px solid var(--gavoille-red);
-        }
-
-        .logo-gavoille { 
-            color: var(--gavoille-red); 
-            font-weight: 900; 
-            font-size: 2.2rem; 
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        .main-container { display: flex; flex: 1; padding: 15px; gap: 15px; overflow: hidden; }
-
-        .mirror-section {
-            flex: 1.8; position: relative; background: #000;
-            border-radius: 20px; overflow: hidden; border: 2px solid #333;
-        }
-
+        .main-container { display: flex; flex: 1; padding: 20px; gap: 20px; position: relative; }
+        .mirror-section { flex: 1.2; position: relative; background: #000; border-radius: 20px; overflow: hidden; border: 3px solid #333; }
         #video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-        .gallery-section {
-            flex: 1; display: grid; grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr; gap: 10px;
-        }
-
-        .photo-slot {
-            background: #1a1a1a; border-radius: 12px; overflow: hidden;
-            position: relative; border: 2px solid #333; transition: all 0.3s;
-        }
-
+        .gallery-section { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15px; }
+        .photo-slot { background: #222; border-radius: 12px; overflow: hidden; border: 2px solid #444; position: relative; transition: all 0.3s; }
         .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .slot-label { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 5px; font-size: 10px; }
 
-        .btn-red {
-            position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-            background: var(--gavoille-red); color: white; border: none;
-            padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: bold;
-            cursor: pointer; text-transform: uppercase;
+        /* Overlay de fin */
+        #final-overlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 10; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
         }
 
-        .controls { padding: 25px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        
-        /* Bouton de capture principal ROUGE */
-        .capture-btn {
-            width: 90px; height: 90px; 
-            background: var(--gavoille-red); 
-            border-radius: 50%;
-            border: 6px solid white; 
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-        }
+        .btn { padding: 15px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 10px; transition: 0.2s; }
+        .btn-red { background: var(--gavoille-red); color: white; }
+        .btn-outline { background: transparent; border: 2px solid white; color: white; }
 
-        .capture-btn:active { transform: scale(0.9); }
+        .controls { padding: 25px; text-align: center; }
+        .capture-btn { width: 80px; height: 80px; background: white; border-radius: 50%; border: 6px solid var(--gavoille-red); cursor: pointer; }
 
-        /* Fenêtre Modale */
-        #qr-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 100; justify-content: center; align-items: center;
-        }
-
-        .modal-content {
-            background: white; padding: 30px; border-radius: 25px; text-align: center; color: black;
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-        }
+        #qrcode { background: white; padding: 15px; border-radius: 10px; margin: 20px 0; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-gavoille">GAVOILLE</div>
+    <div class="logo">GAVOILLE <span style="color:var(--gavoille-red)">Opticiens</span></div>
 </header>
 
 <div class="main-container">
     <div class="mirror-section">
         <video id="video" autoplay playsinline></video>
+        <div id="final-overlay">
+            <h2 style="font-size: 2rem;">SUBTIME !</h2>
+            <p>Scannez pour récupérer vos photos et partagez votre nouveau look</p>
+            <div id="qrcode"></div>
+            <p style="color: var(--gavoille-red); font-weight: bold;">#GavoilleOpticiens</p>
+            <button class="btn btn-outline" onclick="resetMirror()">Reprendre des photos</button>
+        </div>
     </div>
 
     <div class="gallery-section">
-        <div class="photo-slot" id="slot-1"></div>
-        <div class="photo-slot" id="slot-2"></div>
-        <div class="photo-slot" id="slot-3"></div>
-        <div class="photo-slot" id="slot-4"></div>
+        <div class="photo-slot" id="slot-1"><div class="slot-label">LOOK 1</div></div>
+        <div class="photo-slot" id="slot-2"><div class="slot-label">LOOK 2</div></div>
+        <div class="photo-slot" id="slot-3"><div class="slot-label">LOOK 3</div></div>
+        <div class="photo-slot" id="slot-4"><div class="slot-label">LOOK 4</div></div>
     </div>
 </div>
 
-<div class="controls">
+<div class="controls" id="capture-area">
     <button class="capture-btn" onclick="takeSnapshot()"></button>
-    <p style="text-transform: uppercase; letter-spacing: 1px; font-size: 14px;">Appuyez pour comparer vos lunettes</p>
-</div>
-
-<div id="qr-modal">
-    <div class="modal-content">
-        <h2 style="margin:0">GAVOILLE OPTICIENS</h2>
-        <div id="qrcode"></div>
-        <p>Scannez pour retrouver la boutique sur Instagram</p>
-        <button style="background:#000; color:#fff; border:none; padding:12px 25px; border-radius:10px;" onclick="closeModal()">RETOUR AU MIROIR</button>
-    </div>
+    <p id="instruction-text">Touchez pour essayer votre première paire</p>
 </div>
 
 <canvas id="canvas" style="display:none;"></canvas>
@@ -129,9 +77,11 @@
 
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
         .then(stream => { video.srcObject = stream; })
-        .catch(err => alert("Veuillez autoriser la caméra pour le miroir Gavoille"));
+        .catch(err => alert("Caméra non détectée"));
 
     function takeSnapshot() {
+        if (slotIndex > 4) return;
+
         const context = canvas.getContext('2d');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -141,26 +91,40 @@
 
         const imageData = canvas.toDataURL('image/png');
         const slot = document.getElementById(`slot-${slotIndex}`);
-        
-        slot.innerHTML = `
-            <img src="${imageData}">
-            <button class="btn-red" onclick="generateQR()">PARTAGER</button>
-        `;
+        slot.innerHTML += `<img src="${imageData}">`;
         slot.style.borderColor = "var(--gavoille-red)";
         
-        slotIndex = (slotIndex % 4) + 1;
+        slotIndex++;
+
+        if (slotIndex > 4) {
+            showFinalStep();
+        } else {
+            document.getElementById('instruction-text').innerText = `Super ! Essayez le look ${slotIndex}`;
+        }
     }
 
-    function generateQR() {
+    function showFinalStep() {
+        document.getElementById('capture-area').style.visibility = "hidden";
+        document.getElementById('final-overlay').style.display = "flex";
+        
+        // On génère le QR code vers votre Instagram
         document.getElementById("qrcode").innerHTML = "";
         new QRCode(document.getElementById("qrcode"), {
             text: "https://www.instagram.com/gavoilleopticiens/", 
-            width: 200, height: 200
+            width: 160, height: 160
         });
-        document.getElementById("qr-modal").style.display = "flex";
     }
 
-    function closeModal() { document.getElementById("qr-modal").style.display = "none"; }
+    function resetMirror() {
+        slotIndex = 1;
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`slot-${i}`).innerHTML = `<div class="slot-label">LOOK ${i}</div>`;
+            document.getElementById(`slot-${i}`).style.borderColor = "#444";
+        }
+        document.getElementById('final-overlay').style.display = "none";
+        document.getElementById('capture-area').style.visibility = "visible";
+        document.getElementById('instruction-text').innerText = "C'est reparti ! Touchez pour le Look 1";
+    }
 </script>
 
 </body>
