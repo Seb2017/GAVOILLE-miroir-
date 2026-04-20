@@ -11,7 +11,6 @@
             --bg: #fafaf9; 
         }
 
-        /* Utilisation de 100dvh pour s'adapter dynamiquement à la barre Safari iPhone */
         body { 
             margin: 0; 
             background: var(--bg); 
@@ -45,7 +44,6 @@
 
         @media (min-width: 768px) { .main-container { flex-direction: row; } }
 
-        /* Miroir : Protection ratio et cadre anthracite */
         .mirror-section { 
             flex: 1.8; 
             position: relative; 
@@ -76,7 +74,6 @@
             text-shadow: 0 0 20px rgba(0,0,0,0.5); 
         }
 
-        /* Galerie : Ratio carré forcé */
         .gallery-section { 
             flex: 1; 
             display: grid; 
@@ -115,7 +112,6 @@
             font-size: 11px; 
         }
 
-        /* Zone de contrôle avec Safe Area pour iPhone */
         .controls { 
             padding: 15px; 
             padding-bottom: calc(15px + env(safe-area-inset-bottom)); 
@@ -151,7 +147,6 @@
             font-size: 0.9rem;
         }
 
-        /* Modal Social - Correction Anti-Distorsion */
         #social-modal { 
             display: none; 
             position: fixed; 
@@ -224,14 +219,13 @@
 <canvas id="canvas" style="display:none;"></canvas>
 
 <script>
-    const shop = { nom: 'Gleizé', tel: '04 74 02 85 91', tag: '#Gleize' };
+    const shop = { nom: 'Gleizé', tag: '#Gleizé #GavoilleOpticiens #HésitationLunettes' };
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const countDiv = document.getElementById('countdown');
     let photos = [null, null, null, null];
     let current = 0;
 
-    // Camera Init
     navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } } 
     }).then(s => {
@@ -282,9 +276,8 @@
         img.onload = () => {
             const w = img.width;
             const h = img.height;
-            // Calcul du ratio strict pour éviter la distorsion à l'envoi
             collage.width = w * 2 + 30;
-            collage.height = h * 2 + 400;
+            collage.height = h * 2 + 380;
             
             const ctx = collage.getContext('2d');
             ctx.fillStyle = "white"; ctx.fillRect(0,0,collage.width, collage.height);
@@ -298,22 +291,19 @@
                 const pImg = new Image();
                 pImg.onload = () => {
                     ctx.drawImage(pImg, pos[i][0], pos[i][1], w, h);
-                    // Badge lettre
                     ctx.fillStyle = "#e60000"; ctx.beginPath(); ctx.arc(pos[i][0]+55, pos[i][1]+55, 45, 0, Math.PI*2); ctx.fill();
                     ctx.fillStyle = "white"; ctx.font = "bold 50px Arial"; ctx.textAlign="center"; ctx.fillText(labels[i], pos[i][0]+55, pos[i][1]+72);
                     
                     loaded++;
                     if(loaded === photos.filter(x=>x).length) {
                         const ft = h*2 + 30;
-                        // Bandeau Boutique Anthracite
                         ctx.fillStyle = "#374151"; ctx.fillRect(0, ft, collage.width, 110);
                         ctx.fillStyle = "white"; ctx.font = "bold 60px Helvetica"; ctx.textAlign="center";
                         ctx.fillText("GAVOILLE OPTICIENS", collage.width/2, ft+75);
                         
-                        // Footer Noir
                         ctx.fillStyle = "#000"; ctx.fillRect(0, ft+110, collage.width, collage.height-ft-110);
                         ctx.fillStyle = "white"; ctx.font = "26px Helvetica";
-                        ctx.fillText(`Lequel préférez-vous ? ${shop.tag} - Tel: ${shop.tel}`, collage.width/2, ft+210);
+                        ctx.fillText(`Lequel préférez-vous ? ${shop.tag}`, collage.width/2, ft+210);
                         
                         document.getElementById('final-collage').src = collage.toDataURL('image/jpeg', 0.95);
                         document.getElementById('social-modal').style.display = "flex";
