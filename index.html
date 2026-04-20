@@ -3,45 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gavoille Opticiens - Gleizé (Vitrines v2)</title>
+    <title>Gavoille Opticiens - Gleizé</title>
     <style>
-        :root { --red: #e60000; --powder-white: #fafaf9; --anthracite: #374151; --light-gray: #f3f4f6; --black: #111; }
-        body { margin: 0; background: var(--powder-white); font-family: 'Helvetica Neue', Arial, sans-serif; color: var(--black); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        :root { --red: #e60000; --anthracite: #374151; --bg: #fafaf9; }
+        body { margin: 0; background: var(--bg); font-family: 'Helvetica Neue', Arial, sans-serif; color: #111; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { padding: 15px; text-align: center; border-bottom: 1px solid #e7e5e4; background: white; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.01); }
-        .logo { font-weight: 900; letter-spacing: 5px; font-size: 1.7rem; color: #111; }
-        .tagline { color: var(--red); font-size: 0.8rem; font-weight: bold; margin-top: 3px; }
+        header { padding: 12px; text-align: center; border-bottom: 1px solid #e7e5e4; background: white; flex-shrink: 0; }
+        .logo { font-weight: 900; letter-spacing: 5px; font-size: 1.5rem; }
+        .tagline { color: var(--red); font-size: 0.7rem; font-weight: bold; margin-top: 2px; }
 
-        .main-container { display: flex; flex: 1; padding: 25px; gap: 25px; overflow: hidden; flex-direction: column; }
+        .main-container { display: flex; flex: 1; padding: 15px; gap: 15px; overflow: hidden; flex-direction: column; }
         @media (min-width: 768px) { .main-container { flex-direction: row; } }
 
-        /* Miroir : Cadre Gris Anthracite (inspiration menuiseries vitrines) */
-        .mirror-section { flex: 1.5; position: relative; border-radius: 30px; overflow: hidden; border: 3px solid var(--anthracite); background: white; box-shadow: 0 15px 50px rgba(0,0,0,0.03); outline: 4px solid white; }
+        /* Miroir : Protection contre la déformation */
+        .mirror-section { flex: 1.5; position: relative; border-radius: 20px; overflow: hidden; border: 4px solid var(--anthracite); background: #000; }
         #video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        #countdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 110px; font-weight: 900; color: var(--red); display: none; text-shadow: 0 0 20px rgba(255,255,255,0.7); z-index: 100; }
+        #countdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 100px; font-weight: 900; color: var(--red); display: none; z-index: 100; text-shadow: 0 0 20px rgba(0,0,0,0.5); }
 
-        /* Galerie */
-        .gallery-section { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        /* Galerie : Ratio carré forcé pour les slots mais pas pour les images */
+        .gallery-section { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         @media (min-width: 768px) { .gallery-section { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; } }
-        .photo-slot { background: white; border-radius: 20px; overflow: hidden; position: relative; border: 1px solid #e7e5e4; aspect-ratio: 1/1; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
-        .slot-tag { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
-
-        /* Commandes : Style ultra-épuré */
-        .controls { padding: 30px; display: flex; justify-content: center; align-items: center; gap: 45px; background: white; border-top: 1px solid #e7e5e4; flex-shrink: 0; box-shadow: 0 -1px 4px rgba(0,0,0,0.01); }
-        .btn-shot-group { text-align: center; cursor: pointer; }
-        .btn-shot { width: 80px; height: 80px; background: white; border: 7px solid rgba(230,0,0,0.08); border-radius: 50%; outline: 1px solid var(--red); transition: 0.2s; box-shadow: 0 4px 12px rgba(230,0,0,0.08); }
-        .btn-shot:active { transform: scale(0.92); box-shadow: 0 2px 4px rgba(230,0,0,0.15); }
         
-        .btn-finish { background: var(--black); color: white; border: none; padding: 18px 38px; border-radius: 50px; font-weight: 900; font-size: 1rem; cursor: pointer; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-transform: uppercase; letter-spacing: 1px; }
+        .photo-slot { background: #eee; border-radius: 15px; overflow: hidden; position: relative; border: 1px solid #ddd; aspect-ratio: 1/1; }
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; } /* Garde les proportions dans la vignette */
+        .slot-tag { position: absolute; top: 8px; left: 8px; background: var(--red); color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
 
-        /* Modal Social */
-        #social-modal { display: none; position: fixed; inset: 0; background: rgba(250, 250, 249, 0.98); z-index: 2000; flex-direction: column; align-items: center; padding: 30px; overflow-y: auto; backdrop-filter: blur(8px); }
-        #final-collage { width: 100%; max-width: 460px; border-radius: 25px; margin: 25px 0; border: 4px solid white; box-shadow: 0 15px 50px rgba(0,0,0,0.04); }
-        .social-grid { display: grid; gap: 18px; width: 100%; max-width: 420px; }
-        
-        /* Bouton Insta dégradé */
-        .btn-share { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); color: white; padding: 22px; border-radius: 18px; border: none; font-weight: bold; cursor: pointer; font-size: 1.25rem; box-shadow: 0 6px 22px rgba(220, 39, 67, 0.18); }
+        .controls { padding: 20px; display: flex; justify-content: center; align-items: center; gap: 30px; background: white; border-top: 1px solid #e7e5e4; }
+        .btn-shot { width: 70px; height: 70px; background: white; border: 6px solid var(--red); border-radius: 50%; cursor: pointer; }
+        .btn-finish { background: var(--anthracite); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-weight: 900; cursor: pointer; display: none; }
+
+        #social-modal { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto; }
+        #final-collage { width: 100%; max-width: 450px; border-radius: 15px; margin: 15px 0; border: 5px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .btn-share { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); color: white; padding: 20px; border-radius: 15px; border: none; font-weight: bold; width: 100%; max-width: 400px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -65,33 +58,21 @@
 </div>
 
 <div class="controls">
-    <div class="btn-shot-group" onclick="startCountdown()">
-        <div class="btn-shot"></div>
-        <div style="margin-top:7px; font-size:11px; font-weight: bold; color:var(-- black); text-transform:uppercase; letter-spacing: 1px;">SOURIRE !</div>
-    </div>
-    <button id="btn-compare" class="btn-finish" onclick="buildFinal()">AIDEZ-MOI À CHOISIR ➔</button>
+    <div onclick="startCountdown()"><div class="btn-shot"></div></div>
+    <button id="btn-compare" class="btn-finish" onclick="buildFinal()">COMPARER ➔</button>
 </div>
 
 <div id="social-modal">
-    <h2 style="margin:0; color:var(--black); letter-spacing: 2px;">SUBLIME !</h2>
+    <h2 style="margin:0; color:var(--anthracite);">VOTRE STYLE</h2>
     <img id="final-collage" src="">
-    <div class="social-grid">
-        <button class="btn-share" onclick="shareToInsta()">📤 PARTAGER / PUBLIER</button>
-        <button onclick="location.reload()" style="background:#e7e5e4; color:#333; border:none; padding:18px; border-radius:15px; cursor:pointer;">RECOMMENCER</button>
-    </div>
+    <button class="btn-share" onclick="shareToInsta()">📤 PARTAGER / PUBLIER</button>
+    <button onclick="location.reload()" style="margin-top:15px; border:none; background:none; text-decoration:underline; cursor:pointer;">Recommencer</button>
 </div>
 
 <canvas id="canvas" style="display:none;"></canvas>
 
 <script>
-    // ==========================================
-    // CONFIGURATION MAGASIN (Déjà GLEIZE)
-    // ==========================================
     const shop = { nom: 'Gleizé', tel: '04 74 02 85 91', tag: '#Gleize' };
-
-    // ==========================================
-    // LOGIQUE APPLICATION
-    // ==========================================
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const countDiv = document.getElementById('countdown');
@@ -108,10 +89,17 @@
 
     function takePhoto() {
         const ctx = canvas.getContext('2d');
-        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-        ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
-        ctx.drawImage(video, 0, 0);
-        const data = canvas.toDataURL('image/jpeg', 0.8);
+        // FIX ANTI-DISTORSION : Dimensions exactes du capteur
+        canvas.width = video.videoWidth; 
+        canvas.height = video.videoHeight;
+        
+        ctx.save();
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+        
+        const data = canvas.toDataURL('image/jpeg', 0.9);
         photos[current % 4] = data;
         document.getElementById(`slot-${(current % 4) + 1}`).innerHTML = `<img src="${data}"><div class="slot-tag"></div>`;
         current++; if(current >= 2) document.getElementById('btn-compare').style.display = "block";
@@ -119,45 +107,57 @@
 
     function buildFinal() {
         const collage = document.createElement('canvas');
-        const img = new Image(); img.src = photos[0];
+        const img = new Image();
+        img.src = photos[0];
         img.onload = () => {
-            const w = img.width, h = img.height;
-            collage.width = w*2+30; collage.height = h*2+400; // Un peu plus grand pour les infos
+            const w = img.width;
+            const h = img.height;
+            // On construit le montage en respectant le ratio de l'image source
+            collage.width = w * 2 + 30;
+            collage.height = h * 2 + 350;
+            
             const ctx = collage.getContext('2d');
-            ctx.fillStyle="#fafaf9"; ctx.fillRect(0,0,collage.width, collage.height);
-            const pos = [[10,10], [w+20, 10], [10, h+20], [w+20, h+20]];
+            ctx.fillStyle = "white"; ctx.fillRect(0,0,collage.width, collage.height);
+            
+            const positions = [[10,10], [w+20, 10], [10, h+20], [w+20, h+20]];
             const labels = ['A','B','C','D'];
-            let done = 0;
+            let loaded = 0;
+            
             photos.forEach((p, i) => {
                 if(!p) return;
-                const pI = new Image(); pI.onload = () => {
-                    ctx.drawImage(pI, pos[i][0], pos[i][1], w, h);
-                    ctx.fillStyle="#e60000"; ctx.beginPath(); ctx.arc(pos[i][0]+50, pos[i][1]+50, 40, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle="white"; ctx.font="bold 45px Arial"; ctx.textAlign="center"; ctx.fillText(labels[i], pos[i][0]+50, pos[i][1]+65);
-                    done++; if(done === photos.filter(x=>x).length) {
-                        const ft = h*2+30; 
-                        // Bandeau Infos : Inspiration Gleizé v2
-                        ctx.fillStyle="#f6f6f2"; ctx.fillRect(0, ft, collage.width, 100);
-                        ctx.fillStyle="black"; ctx.font="bold 55px Helvetica"; ctx.textAlign="center";
+                const pImg = new Image();
+                pImg.onload = () => {
+                    ctx.drawImage(pImg, positions[i][0], positions[i][1], w, h);
+                    // Badge
+                    ctx.fillStyle = "#e60000"; ctx.beginPath(); ctx.arc(positions[i][0]+50, positions[i][1]+50, 40, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = "white"; ctx.font = "bold 45px Arial"; ctx.textAlign="center"; ctx.fillText(labels[i], positions[i][0]+50, positions[i][1]+65);
+                    
+                    loaded++;
+                    if(loaded === photos.filter(x=>x).length) {
+                        // Footer
+                        const ft = h*2 + 30;
+                        ctx.fillStyle = "#374151"; ctx.fillRect(0, ft, collage.width, 100);
+                        ctx.fillStyle = "white"; ctx.font = "bold 50px Helvetica"; ctx.textAlign="center";
                         ctx.fillText("GAVOILLE OPTICIENS", collage.width/2, ft+65);
                         
-                        ctx.fillStyle="#000"; ctx.fillRect(0, ft+100, collage.width, collage.height-ft-100);
-                        ctx.fillStyle="white"; ctx.font="normal 24px Helvetica";
-                        ctx.fillText(`Aidez-moi à choisir ! ${shop.tag} #GavoilleOpticiens #HésitationLunettes - Tel: ${shop.tel}`, collage.width/2, ft+200);
-
-                        document.getElementById('final-collage').src = collage.toDataURL('image/jpeg', 0.9);
-                        document.getElementById('social-modal').style.display="flex";
-                        collage.toBlob(b => { window.sharedFile = new File([b], "gavoille-gleize.jpg", {type:"image/jpeg"}); });
+                        ctx.fillStyle = "#000"; ctx.fillRect(0, ft+100, collage.width, collage.height-ft-100);
+                        ctx.fillStyle = "white"; ctx.font = "22px Helvetica";
+                        ctx.fillText(`Aidez-moi à choisir ! ${shop.tag} #GavoilleOpticiens - Tel: ${shop.tel}`, collage.width/2, ft+180);
+                        
+                        document.getElementById('final-collage').src = collage.toDataURL('image/jpeg', 0.95);
+                        document.getElementById('social-modal').style.display = "flex";
+                        collage.toBlob(b => { window.sharedFile = new File([b], "gavoille.jpg", {type:"image/jpeg"}); }, 'image/jpeg', 0.95);
                     }
-                }; pI.src = p;
+                };
+                pImg.src = p;
             });
         };
     }
 
     async function shareToInsta() {
         if (navigator.share && window.sharedFile) {
-            try { await navigator.share({ files: [window.sharedFile], title: 'Gavoille Gleizé', text: 'Aidez-moi à choisir mes lunettes !' }); } catch(e){}
-        } else { alert("Partage non supporté."); }
+            try { await navigator.share({ files: [window.sharedFile], title: 'Gavoille Opticiens', text: 'Laquelle me va le mieux ?' }); } catch(e){}
+        }
     }
 </script>
 </body>
