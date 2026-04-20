@@ -3,109 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>GAVOILLE - Miroir Connecté</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --red: #e60000; --gold: #c5a059; --bg: #0a0a0a; }
+        :root { --red: #e60000; --black: #111; --gray: #f4f4f4; }
         body { 
-            margin: 0; background: var(--bg); font-family: 'Helvetica Neue', sans-serif; 
-            color: white; height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+            margin: 0; background: var(--black); font-family: 'Century Gothic', sans-serif; 
+            color: white; height: 100vh; overflow: hidden; display: flex; flex-direction: column; 
         }
-
-        /* En-tête luxe */
-        header { 
-            padding: 25px; text-align: center; background: linear-gradient(to bottom, #1a1a1a, var(--bg));
-            border-bottom: 0.5px solid #333;
-        }
-        .logo { font-weight: 200; letter-spacing: 6px; font-size: 1.4rem; text-transform: uppercase; }
-
-        .main { display: flex; flex: 1; padding: 25px; gap: 25px; height: 60%; }
-
-        /* Miroir avec bords arrondis et reflet */
-        .mirror-box {
-            flex: 1.6; position: relative; border-radius: 20px; overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5); border: 1px solid #333; background: #000;
+        header { padding: 20px; text-align: center; border-bottom: 1px solid #333; }
+        .logo { font-size: 1.8rem; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; }
+        
+        .main { display: flex; flex: 1; padding: 20px; gap: 20px; align-items: stretch; }
+        
+        /* Miroir Principal */
+        .mirror-box { 
+            flex: 1.5; border: 1px solid #444; border-radius: 8px; position: relative; 
+            background: #000; overflow: hidden; 
         }
         #video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-        /* Flash blanc au moment de la photo */
-        #flash {
-            position: absolute; top:0; left:0; width:100%; height:100%;
-            background: white; opacity: 0; pointer-events: none; transition: opacity 0.1s;
-        }
-
-        /* Slots de comparaison verticaux pour l'élégance */
-        .gallery { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* Galerie de droite */
+        .grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 15px; }
         .slot { 
-            background: #151515; border-radius: 12px; position: relative; 
-            border: 1px solid #222; transition: all 0.3s; overflow: hidden;
+            background: #222; border-radius: 5px; overflow: hidden; border: 1px solid #333;
+            position: relative; transition: all 0.3s;
         }
-        .slot img { width: 100%; height: 100%; object-fit: cover; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
-
-        /* Contrôles */
-        .footer { padding: 40px; display: flex; justify-content: space-around; align-items: center; }
-        
-        .btn-capture {
-            width: 90px; height: 90px; border-radius: 50%; border: 3px solid white;
-            background: transparent; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
-        }
-        .btn-capture:active { transform: scale(0.9); border-color: var(--red); }
-        .inner-circle { width: 70px; height: 70px; border-radius: 50%; background: white; }
-
-        .btn-reset { 
-            padding: 12px 25px; border-radius: 30px; border: 1px solid #444;
-            background: transparent; color: #888; font-size: 0.9rem; cursor: pointer;
+        .slot img { width: 100%; height: 100%; object-fit: cover; }
+        .slot-btn { 
+            position: absolute; bottom: 10px; width: 100%; text-align: center;
+            background: rgba(0,0,0,0.5); font-size: 10px; padding: 5px 0; text-transform: uppercase;
         }
 
-        /* Modal QR Code style Apple */
-        #modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center;
-        }
-        .modal-card {
-            background: white; color: black; padding: 40px; border-radius: 30px;
-            text-align: center; width: 300px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
+        /* Barre de contrôle */
+        .bar { height: 120px; display: flex; justify-content: space-around; align-items: center; padding: 0 50px; }
+        .btn-reset { border: 1px solid #666; background: transparent; color: #999; padding: 10px 20px; border-radius: 30px; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+        .shutter { width: 80px; height: 80px; background: white; border-radius: 50%; border: 6px solid #333; cursor: pointer; }
+        .shutter:active { transform: scale(0.9); background: var(--red); }
+        .hint { color: #666; font-size: 0.8rem; max-width: 150px; text-align: center; }
+
+        /* Pop-up QR */
+        #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99; justify-content:center; align-items:center; flex-direction:column; }
+        .modal-box { background:white; padding:40px; border-radius:20px; color:black; text-align:center; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">GAVOILLE <span style="font-weight: 600; color:var(--red)">OPTICIENS</span></div>
+    <div class="logo">GAVOILLE <span style="color:var(--red)">OPTICIENS</span></div>
 </header>
 
 <div class="main">
     <div class="mirror-box">
         <video id="video" autoplay playsinline></video>
-        <div id="flash"></div>
     </div>
-
-    <div class="gallery">
-        <div class="slot" id="s1" onclick="openShare(this)"></div>
-        <div class="slot" id="s2" onclick="openShare(this)"></div>
-        <div class="slot" id="s3" onclick="openShare(this)"></div>
-        <div class="slot" id="s4" onclick="openShare(this)"></div>
+    <div class="grid">
+        <div class="slot" id="s1" onclick="showQR(1)"></div>
+        <div class="slot" id="s2" onclick="showQR(2)"></div>
+        <div class="slot" id="s3" onclick="showQR(3)"></div>
+        <div class="slot" id="s4" onclick="showQR(4)"></div>
     </div>
 </div>
 
-<div class="footer">
-    <button class="btn-reset" onclick="location.reload()">NOUVEL ESSAYAGE</button>
-    <button class="btn-capture" onclick="capture()">
-        <div class="inner-circle"></div>
-    </button>
-    <div style="width: 130px; color: #555; font-size: 0.8rem;">Appuyez pour comparer vos styles</div>
+<div class="bar">
+    <button class="btn-reset" onclick="location.reload()">Nouveau look</button>
+    <div class="shutter" onclick="snap()"></div>
+    <div class="hint">Appuyez pour comparer vos styles</div>
 </div>
 
-<div id="modal" onclick="this.style.display='none'">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <h2 style="margin-top:0">Partager</h2>
-        <div id="qrcode" style="margin: 20px 0;"></div>
-        <p style="color:#666">Scannez pour retrouver <br>votre sélection</p>
-        <button class="btn-reset" style="background:#000; color:#fff; width:100%" onclick="document.getElementById('modal').style.display='none'">FERMER</button>
+<div id="modal">
+    <div class="modal-box">
+        <div id="qrcode"></div>
+        <p style="margin-top:20px">Scannez pour partager votre style</p>
+        <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:10px; border:none; padding:10px 20px; background:var(--red); color:white; border-radius:5px;">Fermer</button>
     </div>
 </div>
 
@@ -113,41 +83,37 @@
 
 <script>
     const video = document.getElementById('video');
-    const flash = document.getElementById('flash');
+    const canvas = document.getElementById('canvas');
     let count = 1;
 
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 1280 } })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
         .then(s => video.srcObject = s);
 
-    function capture() {
-        // Effet Flash
-        flash.style.opacity = 1;
-        setTimeout(() => flash.style.opacity = 0, 100);
-
-        const canvas = document.getElementById('canvas');
+    function snap() {
+        if(count > 4) count = 1;
         const ctx = canvas.getContext('2d');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        
         ctx.translate(canvas.width, 0);
         ctx.scale(-1, 1);
         ctx.drawImage(video, 0, 0);
-
-        const data = canvas.toDataURL('image/jpeg', 0.8);
-        const slot = document.getElementById('s' + count);
-        slot.innerHTML = `<img src="${data}"><div style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%); font-size:10px; background:rgba(0,0,0,0.5); padding:4px 8px; border-radius:10px;">SCANNER</div>`;
         
-        count = (count % 4) + 1;
+        const img = canvas.toDataURL('image/png');
+        const slot = document.getElementById('s' + count);
+        slot.innerHTML = `<img src="${img}"><div class="slot-btn">Scanner</div>`;
+        slot.style.borderColor = "var(--red)";
+        count++;
     }
 
-    function openShare(el) {
-        if(!el.querySelector('img')) return;
+    function showQR(id) {
+        const slot = document.getElementById('s' + id);
+        if(slot.innerHTML === "") return;
         document.getElementById('qrcode').innerHTML = "";
         new QRCode(document.getElementById("qrcode"), {
-            text: "https://www.instagram.com/gavoilleopticiens/", // Ici on mettra votre lien
+            text: "https://www.instagram.com/gavoilleopticiens/",
             width: 200, height: 200
         });
-        document.getElementById('modal').style.display = 'flex';
+        document.getElementById('modal').style.display = "flex";
     }
 </script>
 </body>
